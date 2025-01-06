@@ -1,0 +1,12 @@
+-- +goose Up
+CREATE TABLE action_events (
+    id UUID PRIMARY KEY,
+    action_id UUID NOT NULL REFERENCES actions(id) ON DELETE CASCADE,
+    executed_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    updated_at TIMESTAMP NOT NULL,
+    comment TEXT
+);
+
+-- +goose Down
+DROP TABLE action_events;
