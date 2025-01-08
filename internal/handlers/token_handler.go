@@ -4,10 +4,9 @@ import (
 	"net/http"
 	"shinko/internal/auth"
 	"shinko/internal/database"
+	"shinko/internal/models"
 	"shinko/util"
 	"time"
-
-	"github.com/google/uuid"
 )
 
 func TokenRoutes(s *http.ServeMux, apiConfig *ApiConfig) {
@@ -17,11 +16,12 @@ func TokenRoutes(s *http.ServeMux, apiConfig *ApiConfig) {
 }
 
 func (cfg *ApiConfig) login(w http.ResponseWriter, r *http.Request) {
-	type loginRequest struct {
+
+	type loginRequestParams struct {
 		Email    string `json:"email"`
 		Password string `json:"password"`
 	}
-	params, err := util.DecodeJSON[loginRequest](r)
+	params, err := util.DecodeJSON[loginRequestParams](r)
 	if util.ErrorNotNil(err, w) {
 		return
 	}
@@ -34,7 +34,7 @@ func (cfg *ApiConfig) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if auth.CheckPasswordHash(searchedUser.HashedPassword, params.Password) != nil {
+	if auth.CheckPasswordHash(searchedUser.PasswordHash, params.Password) != nil {
 
 		util.RespondWithError(w, 401, struct {
 			Error string `json:"error"`
@@ -53,24 +53,14 @@ func (cfg *ApiConfig) login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type User struct {
-		ID           uuid.UUID `json:"id"`
-		CreatedAt    time.Time `json:"created_at"`
-		UpdatedAt    time.Time `json:"updated_at"`
-		Email        string    `json:"email"`
-		Token        string    `json:"token"`
-		RefreshToken string    `json:"refresh_token"`
-		IsChirpyRed  bool      `json:"is_chirpy_red"`
-	}
-
-	userLoginResponse := User{
+	userLoginResponse := models.UserToken{
 		ID:           searchedUser.ID,
 		CreatedAt:    searchedUser.CreatedAt,
 		UpdatedAt:    searchedUser.UpdatedAt,
 		Email:        searchedUser.Email,
+		Username:     searchedUser.Username,
 		Token:        token,
 		RefreshToken: refreshToken,
-		IsChirpyRed:  searchedUser.IsChirpyRed,
 	}
 
 	// Log into refresh token into DB

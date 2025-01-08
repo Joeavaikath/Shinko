@@ -28,7 +28,7 @@ func StartApp(address string) {
 
 	apiConfig := &handlers.ApiConfig{
 		DbQueries: dbQueries,
-		JwtSecret: os.Getenv("SECRET"),
+		JwtSecret: os.Getenv("JWT_SECRET"),
 	}
 
 	RegisterHandlers(serveMux, apiConfig)
