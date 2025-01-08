@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"shinko/internal/auth"
 	"shinko/internal/database"
-	"shinko/internal/util"
+	"shinko/util"
 	"time"
 
 	"github.com/google/uuid"
