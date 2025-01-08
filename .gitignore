@@ -23,6 +23,7 @@ go.work.sum
 
 # VS Code workspace file
 *.code-workspace
+.vscode/
 
 # env file
 .env
