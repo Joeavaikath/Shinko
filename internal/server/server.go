@@ -1,10 +1,8 @@
 package server
 
 import (
-	"database/sql"
 	"net/http"
 	"os"
-	"shinko/internal/database"
 	"shinko/internal/handlers"
 
 	_ "github.com/lib/pq"
@@ -16,18 +14,10 @@ func StartApp(address string) {
 
 	godotenv.Load()
 
-	dbURL := os.Getenv("DB_URL")
-
-	db, err := sql.Open("postgres", dbURL)
-	if err != nil {
-		os.Exit(1)
-	}
-	dbQueries := database.New(db)
-
 	serveMux := http.NewServeMux()
 
 	apiConfig := &handlers.ApiConfig{
-		DbQueries: dbQueries,
+		DbQueries: setupDatabase(),
 		JwtSecret: os.Getenv("JWT_SECRET"),
 	}
 

@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch Shinko",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/shinko",
+            "envFile": "${workspaceFolder}/cmd/shinko/.env",
+            "args": []
+        }
+    ]
+}
