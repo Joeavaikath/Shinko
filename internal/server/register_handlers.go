@@ -12,6 +12,7 @@ func RegisterHandlers(s *http.ServeMux, apiConfig *handlers.ApiConfig) {
 		handlers.AdminRoutes,
 		handlers.MetricsRoutes,
 		handlers.TokenRoutes,
+		handlers.ActionRoutes,
 	}
 
 	for _, handler := range handlers {
