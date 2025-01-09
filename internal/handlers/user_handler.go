@@ -61,18 +61,8 @@ func (cfg *ApiConfig) updateUser(w http.ResponseWriter, r *http.Request) {
 		Username string `json:"username"`
 	}
 
-	accessToken, err := auth.GetBearerToken(r.Header)
+	userID, err := cfg.GetBearerAndValidate(w, r)
 
-	if accessToken == "" {
-		util.RespondWithError(w, http.StatusUnauthorized, err.Error())
-		return
-	}
-
-	if util.ErrorNotNil(err, w) {
-		return
-	}
-
-	userID, err := auth.ValidateJWT(accessToken, cfg.JwtSecret)
 	if err != nil {
 		util.RespondWithError(w, http.StatusUnauthorized, err.Error())
 		return
