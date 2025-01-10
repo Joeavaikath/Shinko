@@ -31,19 +31,16 @@ func (cfg *ApiConfig) addAction(w http.ResponseWriter, r *http.Request) {
 		}
 	}()
 
+	userID, err := cfg.GetBearerAndValidate(w, r)
+
 	// Decode params from incoming request
 	params, err := util.DecodeJSON[addActionParams](r)
 	if err != nil {
 		return
 	}
 
-	userIdUUID, err := uuid.Parse(params.UserId)
-	if err != nil {
-		return
-	}
-
 	createActionDbParams := database.CreateActionParams{
-		UserID:      userIdUUID,
+		UserID:      userID,
 		Name:        params.Action_name,
 		Description: sql.NullString{String: params.Description, Valid: params.Description != ""},
 	}
