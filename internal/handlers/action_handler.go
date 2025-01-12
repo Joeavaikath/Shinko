@@ -22,16 +22,10 @@ func (cfg *ApiConfig) addAction(w http.ResponseWriter, r *http.Request) {
 		Description string `json:"description"`
 	}
 
-	// Handle any possible errors
-	var err error
-	var statusCode int
-	defer func() {
-		if err != nil {
-			util.RespondWithError(w, statusCode, err.Error())
-		}
-	}()
-
 	userID, err := cfg.GetBearerAndValidate(w, r)
+	if err != nil {
+		return
+	}
 
 	// Decode params from incoming request
 	params, err := util.DecodeJSON[addActionParams](r)
