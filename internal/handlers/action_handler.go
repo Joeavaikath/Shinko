@@ -17,7 +17,6 @@ func (cfg *ApiConfig) addAction(w http.ResponseWriter, r *http.Request) {
 
 	// Define request param structure
 	type addActionParams struct {
-		UserId      string `json:"user_id"`
 		Action_name string `json:"action_name"`
 		Description string `json:"description"`
 	}
@@ -40,6 +39,9 @@ func (cfg *ApiConfig) addAction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	action, err := cfg.DbQueries.CreateAction(r.Context(), createActionDbParams)
+	if err != nil {
+		return
+	}
 
 	type actionCreatedResponse struct {
 		Name        string    `json:"name"`
@@ -55,7 +57,6 @@ func (cfg *ApiConfig) addAction(w http.ResponseWriter, r *http.Request) {
 		UserID:      action.UserID,
 	}
 
-	// If success. err is nil so defer does nothing.
 	util.RespondWithJSON(w, http.StatusCreated, actionResponseParams)
 
 }
