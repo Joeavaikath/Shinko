@@ -25,6 +25,7 @@ type Action struct {
 type ActionEvent struct {
 	ID         uuid.UUID
 	ActionID   uuid.UUID
+	UserID     uuid.UUID
 	ExecutedAt time.Time
 	CreatedAt  time.Time
 	UpdatedAt  time.Time

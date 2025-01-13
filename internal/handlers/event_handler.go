@@ -20,7 +20,7 @@ func (cfg *ApiConfig) addEvent(w http.ResponseWriter, r *http.Request) {
 		Comment   string `json:"comment"`
 	}
 
-	_, err := cfg.GetBearerAndValidate(w, r)
+	user_uuid, err := cfg.GetBearerAndValidate(w, r)
 	if err != nil {
 		return
 	}
@@ -37,6 +37,7 @@ func (cfg *ApiConfig) addEvent(w http.ResponseWriter, r *http.Request) {
 	}
 	createEventDbParams := database.CreateEventParams{
 		ActionID: action_uuid,
+		UserID:   user_uuid,
 		Comment:  sql.NullString{String: params.Comment, Valid: params.Comment != ""},
 	}
 

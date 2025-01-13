@@ -14,30 +14,33 @@ import (
 
 const createEvent = `-- name: CreateEvent :one
 
-INSERT into action_events(id, created_at, updated_at, executed_at, action_id, comment) 
+INSERT into action_events(id, created_at, updated_at, executed_at, action_id, user_id, comment) 
 VALUES (
     gen_random_uuid(),
     NOW(),
     NOW(),
     NOW(),
     $1,
-    $2
+    $2,
+    $3
 )
-RETURNING id, action_id, executed_at, created_at, updated_at, comment
+RETURNING id, action_id, user_id, executed_at, created_at, updated_at, comment
 `
 
 type CreateEventParams struct {
 	ActionID uuid.UUID
+	UserID   uuid.UUID
 	Comment  sql.NullString
 }
 
 // --- CREATE - START ----
 func (q *Queries) CreateEvent(ctx context.Context, arg CreateEventParams) (ActionEvent, error) {
-	row := q.db.QueryRowContext(ctx, createEvent, arg.ActionID, arg.Comment)
+	row := q.db.QueryRowContext(ctx, createEvent, arg.ActionID, arg.UserID, arg.Comment)
 	var i ActionEvent
 	err := row.Scan(
 		&i.ID,
 		&i.ActionID,
+		&i.UserID,
 		&i.ExecutedAt,
 		&i.CreatedAt,
 		&i.UpdatedAt,
