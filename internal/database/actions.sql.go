@@ -49,3 +49,46 @@ func (q *Queries) CreateAction(ctx context.Context, arg CreateActionParams) (Act
 	)
 	return i, err
 }
+
+const getUserActions = `-- name: GetUserActions :many
+
+
+
+SELECT id, user_id, name, description, recurrance_window, is_calibrating, created_at, updated_at FROM actions WHERE
+user_id = $1
+`
+
+// ----------CREATE Section - END-------------//
+// ----------RETRIEVE Section - START-------------
+// Get all actions created by a user
+func (q *Queries) GetUserActions(ctx context.Context, userID uuid.UUID) ([]Action, error) {
+	rows, err := q.db.QueryContext(ctx, getUserActions, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Action
+	for rows.Next() {
+		var i Action
+		if err := rows.Scan(
+			&i.ID,
+			&i.UserID,
+			&i.Name,
+			&i.Description,
+			&i.RecurranceWindow,
+			&i.IsCalibrating,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}

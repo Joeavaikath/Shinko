@@ -14,3 +14,13 @@ VALUES (
 RETURNING *;
 
 -- ----------CREATE Section - END-------------//
+
+
+-- ----------RETRIEVE Section - START-------------
+
+-- Get all actions created by a user
+-- name: GetUserActions :many
+SELECT * FROM actions WHERE
+user_id = $1;
+
+-- ----------RETRIEVE Section - END-------------//
