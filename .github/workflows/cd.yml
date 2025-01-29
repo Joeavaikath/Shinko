@@ -1,0 +1,31 @@
+name: cd
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  push-images:
+    name: Push Docker Images
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Log in to Quay.io
+        uses: redhat-actions/podman-login@v1
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_PASSWORD }}
+
+      - name: Push shinko-app image
+        run: |
+          podman tag shinko-app:latest quay.io/${{ secrets.QUAY_USERNAME }}/shinko-app:latest
+          podman push quay.io/${{ secrets.QUAY_USERNAME }}/shinko-app:latest
+
+      - name: Push shinko-db-migration image
+        run: |
+          podman tag shinko-db-migration:latest quay.io/${{ secrets.QUAY_USERNAME }}/shinko-db-migration:latest
+          podman push quay.io/${{ secrets.QUAY_USERNAME }}/shinko-db-migration:latest
