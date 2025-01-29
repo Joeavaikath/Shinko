@@ -52,3 +52,19 @@ jobs:
       
       - name: Run Lint check
         run: staticcheck ./...
+
+  build:
+    - name: Set up Podman
+        uses: containers/podman-action@v2
+
+    - name: Build app Container image
+      run: podman build -t shinko-app -f Containerfile .
+
+    - name: Build migrations Container image
+      run: podman build -t shinko-db-migration -f Containerfile ./sql/.
+
+    - name: Verify app Container image
+      run: podman images | grep shinko-app
+
+    - name: Verify migrations Container image
+      run: podman images | grep shinko-db-migration
