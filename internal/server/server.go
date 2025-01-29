@@ -1,9 +1,11 @@
 package server
 
 import (
+	"log"
 	"net/http"
 	"os"
 	"shinko/internal/handlers"
+	"time"
 
 	_ "github.com/lib/pq"
 
@@ -12,7 +14,10 @@ import (
 
 func StartApp(address string) {
 
-	godotenv.Load()
+	// Only used in local, k8s will load into OS
+	if err := godotenv.Load(); err != nil {
+		log.Printf("Error loading .env file, are you on non-local?: %v", err)
+	}
 
 	serveMux := http.NewServeMux()
 
@@ -24,9 +29,12 @@ func StartApp(address string) {
 	RegisterHandlers(serveMux, apiConfig)
 
 	server := http.Server{
-		Addr:    address,
-		Handler: serveMux,
+		Addr:              address,
+		Handler:           serveMux,
+		ReadHeaderTimeout: 10 * time.Second,
 	}
 
-	server.ListenAndServe()
+	if err := server.ListenAndServe(); err != nil {
+		log.Fatalf("Could not listen on %s: %v", address, err)
+	}
 }

@@ -1,6 +1,9 @@
 package handlers
 
-import "net/http"
+import (
+	"log"
+	"net/http"
+)
 
 func MetricsRoutes(s *http.ServeMux, apiConfig *ApiConfig) {
 	s.Handle("/app/", apiConfig.middlewareMetricsInc(http.StripPrefix("/app", http.FileServer(http.Dir(".")))))
@@ -8,7 +11,10 @@ func MetricsRoutes(s *http.ServeMux, apiConfig *ApiConfig) {
 	s.HandleFunc("GET /api/healthz", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
+		_, err := w.Write([]byte("OK"))
+		if err != nil {
+			log.Print("Failed to write OK byte")
+		}
 	})
 }
 

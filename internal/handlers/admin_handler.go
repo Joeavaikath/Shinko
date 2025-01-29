@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"os"
 	"shinko/util"
@@ -21,7 +22,13 @@ func (cfg *ApiConfig) printMetric(w http.ResponseWriter, r *http.Request) {
 	data := MetricPageData{
 		Hits: cfg.FileserverHits.Load(),
 	}
-	tmpl.Execute(w, data)
+	err := tmpl.Execute(w, data)
+	if err != nil {
+		log.Print("Failed to execute metrics template")
+		util.RespondWithError(w, http.StatusInternalServerError, struct {
+			Error string `json:"error"`
+		}{Error: "Resource is missing"})
+	}
 }
 
 func (cfg *ApiConfig) resetMetric(w http.ResponseWriter, r *http.Request) {
