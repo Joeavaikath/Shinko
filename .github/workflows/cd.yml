@@ -13,6 +13,23 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
+      - name: Build shinko-app image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: shinko-app
+          tags: latest ${{ github.sha }}
+          containerfiles: |
+            ./Containerfile
+
+      - name: Build shinko-db-migration image
+        uses: redhat-actions/buildah-build@v2
+        with:
+          image: shinko-db-migration
+          tags: latest ${{ github.sha }}
+          context: ./sql
+          containerfiles: |
+            ./sql/Containerfile
+
       - name: Log in to Quay.io
         uses: redhat-actions/podman-login@v1
         with:
