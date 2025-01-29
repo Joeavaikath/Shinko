@@ -69,7 +69,12 @@ func (cfg *ApiConfig) login(w http.ResponseWriter, r *http.Request) {
 		UserID:    searchedUser.ID,
 		ExpiresAt: time.Now().Add(60 * 24 * time.Hour),
 	}
-	cfg.DbQueries.CreateRefreshToken(r.Context(), refreshTokenParams)
+	_, err = cfg.DbQueries.CreateRefreshToken(r.Context(), refreshTokenParams)
+	if err != nil {
+		util.RespondWithError(w, http.StatusInternalServerError, struct {
+			Error string `json:"error"`
+		}{Error: "Refresh token created failed"})
+	}
 
 	util.RespondWithJSON(w, 200, userLoginResponse)
 

@@ -2,6 +2,7 @@ package util
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 )
 
@@ -31,13 +32,19 @@ func ErrorNotNil(err error, w http.ResponseWriter) bool {
 func RespondWithError(w http.ResponseWriter, code int, errorPayload interface{}) {
 	w.WriteHeader(code)
 	dat, _ := json.Marshal(errorPayload)
-	w.Write(dat)
+	_, err := w.Write(dat)
+	if err != nil {
+		log.Printf("Failed to write error response: %v", err)
+	}
 }
 
 func RespondWithJSON(w http.ResponseWriter, code int, payload interface{}) {
 	w.WriteHeader(code)
 	dat, _ := json.Marshal(payload)
-	w.Write(dat)
+	_, err := w.Write(dat)
+	if err != nil {
+		log.Printf("Failed to write response: %v", err)
+	}
 }
 
 func SliceContains[T comparable](slice []T, item T) bool {
