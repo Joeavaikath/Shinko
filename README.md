@@ -9,8 +9,8 @@ Shinko is a habit formation application designed to help users build and maintai
 
 ## Features
 - Track daily habits
-- Set reminders
 - View progress over time
+- Get recurrance goals for streaks
 - Customize habit goals
 
 ## Installation
