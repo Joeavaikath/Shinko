@@ -67,12 +67,13 @@ jobs:
           image: shinko-app
           tags: latest ${{ github.sha }}
           containerfiles: |
-            ./Containerfile
+            ./cicd
 
       - name: Build shinko-db-migration image
         uses: redhat-actions/buildah-build@v2
         with:
           image: shinko-db-migration
           tags: latest ${{ github.sha }}
+          context: ./sql
           containerfiles: |
             ./sql/Containerfile
