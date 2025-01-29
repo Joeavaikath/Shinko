@@ -1,0 +1,26 @@
+# Build stage - Install Goose
+FROM quay.io/projectquay/golang:1.23 AS builder
+
+# Set GOBIN to ensure Goose is installed in a known location
+ENV GOBIN=/usr/local/bin
+
+# Install Goose
+RUN go install github.com/pressly/goose/v3/cmd/goose@latest
+
+# Final stage - Use a smaller runtime image
+FROM quay.io/centos/centos:stream9-minimal
+
+# Set working directory
+WORKDIR /migrations
+
+# Copy Goose binary from builder stage
+COPY --from=builder /usr/local/bin/goose /usr/local/bin/goose
+
+# Copy migration files
+COPY ./schema /migrations
+
+# Ensure Goose is executable
+RUN chmod +x /usr/local/bin/goose
+
+# Use Goose as default command
+ENTRYPOINT ["goose"]
