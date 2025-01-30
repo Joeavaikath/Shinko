@@ -4,8 +4,8 @@ Welcome to Shinko!
 
 This repository holds the portfolio project for a habit formation application.
 
-https://github.com/Joeavaikath/shinko/actions/workflows/ci.yml/badge.svg
-https://github.com/Joeavaikath/shinko/actions/workflows/cd.yml/badge.svg
+![CI Status](https://github.com/Joeavaikath/shinko/actions/workflows/ci.yml/badge.svg)
+![CD Status](https://github.com/Joeavaikath/shinko/actions/workflows/cd.yml/badge.svg)
 
 
 ## Description
