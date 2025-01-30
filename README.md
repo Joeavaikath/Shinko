@@ -4,6 +4,10 @@ Welcome to Shinko!
 
 This repository holds the portfolio project for a habit formation application.
 
+https://github.com/Joeavaikath/shinko/actions/workflows/ci.yml/badge.svg
+https://github.com/Joeavaikath/shinko/actions/workflows/cd.yml/badge.svg
+
+
 ## Description
 Shinko is a habit formation application designed to help users build and maintain good habits through tracking and reminders.
 
