@@ -30,3 +30,6 @@ go.work.sum
 
 # pem file
 *.pem
+
+# .sh helper files
+*.sh
