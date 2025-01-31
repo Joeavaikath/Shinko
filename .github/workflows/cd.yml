@@ -1,8 +1,10 @@
 name: cd
 
 on:
-  push:
+  pull_request:
     branches: [main]
+    paths-ignore:
+      - 'README.md'
 
 jobs:
   push-images:
