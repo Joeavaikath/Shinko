@@ -33,7 +33,7 @@ type CreateEventParams struct {
 	Comment  sql.NullString
 }
 
-// --- CREATE - START ----
+// --- CREATE - START -----
 func (q *Queries) CreateEvent(ctx context.Context, arg CreateEventParams) (ActionEvent, error) {
 	row := q.db.QueryRowContext(ctx, createEvent, arg.ActionID, arg.UserID, arg.Comment)
 	var i ActionEvent
@@ -47,4 +47,44 @@ func (q *Queries) CreateEvent(ctx context.Context, arg CreateEventParams) (Actio
 		&i.Comment,
 	)
 	return i, err
+}
+
+const getUserEvents = `-- name: GetUserEvents :many
+
+
+SELECT id, action_id, user_id, executed_at, created_at, updated_at, comment FROM action_events
+WHERE user_id = $1
+`
+
+// --- CREATE - END -----
+// --- RETRIEVE - START ------
+func (q *Queries) GetUserEvents(ctx context.Context, userID uuid.UUID) ([]ActionEvent, error) {
+	rows, err := q.db.QueryContext(ctx, getUserEvents, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ActionEvent
+	for rows.Next() {
+		var i ActionEvent
+		if err := rows.Scan(
+			&i.ID,
+			&i.ActionID,
+			&i.UserID,
+			&i.ExecutedAt,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.Comment,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }

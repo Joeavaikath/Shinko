@@ -15,6 +15,7 @@ func UserRoutes(s *http.ServeMux, apiConfig *ApiConfig) {
 	s.Handle("PUT /api/users", http.HandlerFunc(apiConfig.updateUser))
 
 	s.Handle("GET /api/users/{user_id}/actions", http.HandlerFunc(apiConfig.getUserActions))
+	s.Handle("GET /api/users/{user_id}/events", http.HandlerFunc(apiConfig.getUserEvents))
 }
 
 func (cfg *ApiConfig) addUser(w http.ResponseWriter, r *http.Request) {
@@ -138,5 +139,36 @@ func (cfg *ApiConfig) getUserActions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	util.RespondWithJSON(w, http.StatusCreated, actions)
+	util.RespondWithJSON(w, http.StatusOK, actions)
+}
+
+func (cfg *ApiConfig) getUserEvents(w http.ResponseWriter, r *http.Request) {
+
+	user_uuid, err := cfg.GetBearerAndValidate(w, r)
+	if err != nil {
+		return
+	}
+
+	user_id := r.PathValue("user_id")
+	path_user_uuid, err := uuid.Parse(user_id)
+	if err != nil {
+		util.RespondWithError(w, http.StatusUnauthorized, err.Error())
+		return
+	}
+
+	if path_user_uuid != user_uuid {
+		util.RespondWithError(w, http.StatusUnauthorized, struct {
+			Error string `json:"error"`
+		}{Error: "unauthorized user operation"})
+		return
+	}
+
+	events, err := cfg.DbQueries.GetUserEvents(r.Context(), user_uuid)
+	if err != nil {
+		util.RespondWithError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+
+	util.RespondWithJSON(w, http.StatusOK, events)
+
 }
