@@ -73,7 +73,8 @@ func (cfg *ApiConfig) login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		util.RespondWithError(w, http.StatusInternalServerError, struct {
 			Error string `json:"error"`
-		}{Error: "Refresh token created failed"})
+		}{Error: "Refresh token creation failed"})
+		return
 	}
 
 	util.RespondWithJSON(w, 200, userLoginResponse)
@@ -126,6 +127,7 @@ func (cfg *ApiConfig) revoke(w http.ResponseWriter, r *http.Request) {
 		util.RespondWithError(w, 404, struct {
 			Error string `json:"error"`
 		}{Error: "Auth token not found"})
+		return
 	}
 
 	w.WriteHeader(204)
