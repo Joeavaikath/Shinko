@@ -1,11 +1,12 @@
 # Entities and Relationships
 
-Users can be created
+## **Users**
+- **Users** can be created.
+- **Users** can fetch their **Actions**.
+- **Users** can fetch their **Events** (spanning different **Actions**).
 
-Users create Actions
+## **Actions**
+- **Users** create **Actions**.
 
-Users log Events under an Action
-
-Users can fetch their Actions
-
-Users can fetch their Events (spanning different actions)
+## **Events**
+- **Users** log **Events** under an **Action**.
