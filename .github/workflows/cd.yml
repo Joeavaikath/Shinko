@@ -15,12 +15,19 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
+      
+      - name: Read versions from file
+        id: vars
+        run: |
+          export $(cat VERSION | xargs)
+          echo "APP_VERSION=$APP_VERSION" >> $GITHUB_ENV
+          echo "DB_MIGRATION_VERSION=$DB_MIGRATION_VERSION" >> $GITHUB_ENV
 
       - name: Build shinko-app image
         uses: redhat-actions/buildah-build@v2
         with:
           image: shinko-app
-          tags: latest ${{ github.sha }}
+          tags: latest ${{ env.APP_VERSION }} ${{ github.sha }}
           containerfiles: |
             ./Containerfile
 
@@ -28,7 +35,7 @@ jobs:
         uses: redhat-actions/buildah-build@v2
         with:
           image: shinko-db-migration
-          tags: latest ${{ github.sha }}
+          tags: latest ${{ env.DB_MIGRATION_VERSION }} ${{ github.sha }}
           context: ./sql
           containerfiles: |
             ./sql/Containerfile
@@ -43,9 +50,11 @@ jobs:
       - name: Push shinko-app image
         run: |
           podman tag shinko-app:latest quay.io/${{ secrets.QUAY_USERNAME }}/shinko-app:latest
-          podman push quay.io/${{ secrets.QUAY_USERNAME }}/shinko-app:latest
+          podman tag shinko-app:latest quay.io/${{ secrets.QUAY_USERNAME }}/shinko-app:${{ env.APP_VERSION }}
+          podman push quay.io/${{ secrets.QUAY_USERNAME }}/shinko-app:latest quay.io/${{ secrets.QUAY_USERNAME }}/shinko-app:${{ env.VERSION }}
 
       - name: Push shinko-db-migration image
         run: |
           podman tag shinko-db-migration:latest quay.io/${{ secrets.QUAY_USERNAME }}/shinko-db-migration:latest
-          podman push quay.io/${{ secrets.QUAY_USERNAME }}/shinko-db-migration:latest
+          podman tag shinko-db-migration:latest quay.io/${{ secrets.QUAY_USERNAME }}/shinko-db-migration:${{ env.DB_MIGRATION_VERSION }}
+          podman push quay.io/${{ secrets.QUAY_USERNAME }}/shinko-db-migration:latest quay.io/${{ secrets.QUAY_USERNAME }}/shinko-db-migration:${{ env.DB_MIGRATION_VERSION }}
