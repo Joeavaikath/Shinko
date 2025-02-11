@@ -52,10 +52,12 @@ jobs:
         run: |
           podman tag shinko-app:latest quay.io/${{ secrets.QUAY_USERNAME }}/shinko-app:latest
           podman tag shinko-app:latest quay.io/${{ secrets.QUAY_USERNAME }}/shinko-app:${{ env.APP_VERSION }}
-          podman push quay.io/${{ secrets.QUAY_USERNAME }}/shinko-app:latest quay.io/${{ secrets.QUAY_USERNAME }}/shinko-app:${{ env.APP_VERSION }}
+          podman push quay.io/${{ secrets.QUAY_USERNAME }}/shinko-app:latest
+          podman push quay.io/${{ secrets.QUAY_USERNAME }}/shinko-app:${{ env.APP_VERSION }}
 
       - name: Push shinko-db-migration image
         run: |
           podman tag shinko-db-migration:latest quay.io/${{ secrets.QUAY_USERNAME }}/shinko-db-migration:latest
           podman tag shinko-db-migration:latest quay.io/${{ secrets.QUAY_USERNAME }}/shinko-db-migration:${{ env.DB_MIGRATION_VERSION }}
-          podman push quay.io/${{ secrets.QUAY_USERNAME }}/shinko-db-migration:latest quay.io/${{ secrets.QUAY_USERNAME }}/shinko-db-migration:${{ env.DB_MIGRATION_VERSION }}
+          podman push quay.io/${{ secrets.QUAY_USERNAME }}/shinko-db-migration:latest
+          podman push quay.io/${{ secrets.QUAY_USERNAME }}/shinko-db-migration:${{ env.DB_MIGRATION_VERSION }}
